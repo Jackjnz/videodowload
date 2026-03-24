@@ -1,0 +1,21 @@
+# Jack叔叔视频下载器 - 极简版 v2.0
+# 必需的Python依赖包
+
+# Web界面框架
+Flask==2.3.3
+
+# 核心下载引擎（建议定期 pip install --upgrade yt-dlp 更新）
+yt-dlp>=2024.1.0
+
+# HTTP请求库（可选，用于网络请求）
+requests>=2.31.0
+
+# 标准库（无需安装）
+# subprocess - 调用yt-dlp下载工具
+# threading - 多线程下载管理
+# json - 数据存储格式
+# os - 系统操作
+# sys - 系统相关
+# time - 时间处理
+# datetime - 日期时间
+# uuid - 唯一标识符生成

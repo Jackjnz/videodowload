@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+download_history.json
+.claude/
+*.mov
+*.mp4
+*.zip
