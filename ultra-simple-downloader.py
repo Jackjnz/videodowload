@@ -1530,6 +1530,50 @@ def douyin_cookie():
     else:
         return jsonify({"success": False, "message": f"从{browser}提取Cookie失败"})
 
+def auto_update_from_github():
+    """启动时从 GitHub 自动拉取最新代码"""
+    try:
+        # 检查是否在 git 仓库中
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        result = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            capture_output=True, text=True, cwd=script_dir
+        )
+        if result.returncode != 0:
+            return
+
+        print("🔄 检查程序更新...")
+
+        # 获取当前版本
+        old_hash = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, cwd=script_dir
+        ).stdout.strip()
+
+        # git pull
+        pull = subprocess.run(
+            ["git", "pull", "origin", "main", "--ff-only"],
+            capture_output=True, text=True, cwd=script_dir, timeout=30
+        )
+
+        if pull.returncode == 0:
+            new_hash = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, cwd=script_dir
+            ).stdout.strip()
+
+            if new_hash != old_hash:
+                print(f"✅ 程序已更新: {old_hash} → {new_hash}")
+                print("   ⚠️ 部分更新需要重启后生效")
+            else:
+                print("✅ 程序已是最新版本")
+        else:
+            print("⚠️ 程序自动更新失败，继续使用当前版本")
+    except FileNotFoundError:
+        pass  # git 未安装，跳过
+    except Exception as e:
+        print(f"⚠️ 程序自动更新异常: {e}")
+
 def check_and_install_yt_dlp():
     """检查并安装yt-dlp，启动时自动更新"""
     try:
@@ -1584,6 +1628,9 @@ def main():
 
     print("\n🎬 Jack叔叔视频下载器 - v2.6")
     print("=" * 50)
+
+    # 自动从 GitHub 更新
+    auto_update_from_github()
 
     # 检查依赖
     if not check_and_install_yt_dlp():
